@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= title || "Web Shell Runner" %></title>
+  <link rel="stylesheet" href="/public/css/styles.css" />
+</head>
+<body>
+  <header class="header">
+    <h1>Web Shell Runner</h1>
+    <% if (typeof csrfToken !== "undefined") { %>
+      <form class="logout" method="post" action="/logout">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit">ログアウト</button>
+      </form>
+    <% } %>
+  </header>
+  <main class="container">
+    <%- body %>
+  </main>
+  <footer class="footer">© <%= new Date().getFullYear() %></footer>
+</body>
+</html>
