@@ -12,6 +12,7 @@ import indexRoutes from "./routes/index.js";
 import authRoutes from "./routes/authRoutes.js";
 import apiRoutes, { execRegistry } from "./routes/apiRoutes.js";
 import { resolveScriptSafe, runShellScript } from "./utils/scriptRunner.js";
+import ejsMate from "ejs-mate";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,6 +34,7 @@ app.use(helmet({
 // 静的ファイルとビュー
 app.set("views", path.join(__dirname, "..", "views"));
 app.set("view engine", "ejs");
+app.engine("ejs", ejsMate as any);
 app.use("/public", express.static(path.join(__dirname, "..", "public")));
 
 // セッション
