@@ -1,14 +1,13 @@
 import { Router } from "express";
-import { authGuard } from "../middleware/authGuard.js";
-import { listShellScripts } from "../utils/scriptRunner.js";
 import { config } from "../config.js";
+import { listShellScripts } from "../utils/scriptRunner.js";
 
 const router = Router();
 
-router.get("/", authGuard, async (req, res, next) => {
+router.get("/", async (_req, res, next) => {
   try {
     const scripts = await listShellScripts(config.scriptsDir);
-    res.render("dashboard", { title: "ダッシュボード", scripts, csrfToken: req.csrfToken() });
+    res.render("dashboard", { title: "Web Shell Runner", scripts });
   } catch (e) {
     next(e);
   }
