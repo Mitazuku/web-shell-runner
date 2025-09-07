@@ -1,0 +1,12 @@
+<% layout('layout', { title: 'ログイン', csrfToken }) %>
+<section class="card">
+  <h2>ログイン</h2>
+  <% if (error) { %><div class="error"><%= error %></div><% } %>
+  <form method="post" action="/login" class="form">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <label>パスワード
+      <input type="password" name="password" placeholder="パスワード" required>
+    </label>
+    <button type="submit">ログイン</button>
+  </form>
+</section>
