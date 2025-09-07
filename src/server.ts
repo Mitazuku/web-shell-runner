@@ -7,11 +7,15 @@ import { fileURLToPath } from "url";
 import { config } from "./config.js";
 import indexRoutes from "./routes/index.js";
 import { resolveScriptSafe, runShellScript } from "./utils/scriptRunner.js";
+import { basicAuthMiddleware } from "./middleware/basicAuth.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+// ▼ Basic認証を「最初」に適用（静的ファイル/ページ/API 全部に効かせる）
+app.use(basicAuthMiddleware);
 
 // セキュリティヘッダ（開発中に HSTS は不要）
 app.use(helmet({
