@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title><%= title || "Web Shell Runner" %></title>
+  <title><%- (typeof title !== 'undefined' ? title : 'Web Shell Runner') %></title>
   <link rel="stylesheet" href="/public/css/styles.css" />
 </head>
 <body>
