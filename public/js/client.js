@@ -7,7 +7,6 @@
   }
 
   function run(scriptName) {
-    // WebSocket で直接 scriptName を渡して実行
     const protocol = location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${location.host}/ws/exec?script=${encodeURIComponent(scriptName)}`;
     const ws = new WebSocket(wsUrl);
