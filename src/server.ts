@@ -3,7 +3,6 @@ import session from "express-session";
 import helmet from "helmet";
 import path from "path";
 import csrf from "csurf";
-import type { RequestHandler } from "express";
 import http from "http";
 import { WebSocketServer } from "ws";
 import bodyParser from "body-parser";
@@ -51,7 +50,7 @@ app.use(session({
 // 解析 & CSRF
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-const csrfProtection: RequestHandler = csurf({ cookie: false }); // セッション方式
+const csrfProtection = csrf({ cookie: false });
 app.use(csrfProtection);
 
 // ルーティング
