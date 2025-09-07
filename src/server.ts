@@ -1,25 +1,19 @@
 import express from "express";
-import session from "express-session";
 import helmet from "helmet";
 import path from "path";
-import csrf from "csurf";
 import http from "http";
 import { WebSocketServer } from "ws";
-import bodyParser from "body-parser";
 import { fileURLToPath } from "url";
 import { config } from "./config.js";
 import indexRoutes from "./routes/index.js";
-import authRoutes from "./routes/authRoutes.js";
-import apiRoutes, { execRegistry } from "./routes/apiRoutes.js";
 import { resolveScriptSafe, runShellScript } from "./utils/scriptRunner.js";
-import ejsMate from "ejs-mate";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// セキュリティヘッダ
+// セキュリティヘッダ（開発中に HSTS は不要）
 app.use(helmet({
   hsts: false,
   contentSecurityPolicy: {
@@ -32,34 +26,13 @@ app.use(helmet({
   }
 }));
 
-// 静的ファイルとビュー
+// 静的・ビュー
 app.set("views", path.join(__dirname, "..", "views"));
 app.set("view engine", "ejs");
-app.engine("ejs", ejsMate as any);
 app.use("/public", express.static(path.join(__dirname, "..", "public")));
 
-// セッション
-app.use(session({
-  secret: config.sessionSecret,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    httpOnly: true,
-    sameSite: "lax",
-    // HTTPS運用時は secure: true を推奨
-  }
-}));
-
-// 解析 & CSRF
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-const csrfProtection = csrf({ cookie: false });
-app.use(csrfProtection);
-
 // ルーティング
-app.use(authRoutes);
 app.use(indexRoutes);
-app.use("/api", apiRoutes);
 
 // エラーハンドラ
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
@@ -69,12 +42,23 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 
 const server = http.createServer(app);
 
-// ---- WebSocket: /ws/exec/:execId ----
+// ---- WebSocket: /ws/exec?script=xxx.sh ----
 const wss = new WebSocketServer({ server, path: "/ws/exec" });
-// execIdごとにプロセス生成し、ここで出力を配信する仕組み
+
+// 同一オリジン制限（ALLOWED_ORIGINS）
+function isOriginAllowed(origin?: string): boolean {
+  if (!origin) return false;
+  return config.allowedOrigins.includes(origin);
+}
+
 wss.on("connection", (ws, req) => {
-  // 認証: セッションCookie検証までする場合は、`ws`にセッションをマッピングする実装が必要。
-  // ここでは簡易化のために短命な1回の実行に限定し、クエリ文字列で受領。
+  const origin = req.headers.origin as string | undefined;
+  if (!isOriginAllowed(origin)) {
+    ws.send("[error] Origin not allowed");
+    ws.close();
+    return;
+  }
+
   const url = new URL(req.url ?? "", "http://localhost");
   const scriptName = url.searchParams.get("script");
   if (!scriptName) {
@@ -94,25 +78,19 @@ wss.on("connection", (ws, req) => {
 
   const proc = runShellScript(fullPath);
 
-  proc.stdout.on("data", (chunk) => {
-    ws.send(chunk.toString());
-  });
-  proc.stderr.on("data", (chunk) => {
-    ws.send(chunk.toString());
-  });
+  proc.stdout.on("data", (chunk) => ws.send(chunk.toString()));
+  proc.stderr.on("data", (chunk) => ws.send(chunk.toString()));
   proc.on("close", (code) => {
     ws.send(`\n[process exited with code ${code}]\n`);
     ws.close();
   });
 
   ws.on("close", () => {
-    // クライアントが閉じたらプロセスを殺す（任意）
-    if (!proc.killed) {
-      proc.kill("SIGTERM");
-    }
+    if (!proc.killed) proc.kill("SIGTERM");
   });
 });
 
 server.listen(config.port, () => {
-  console.log(`Server started on http://0.0.0.0:${config.port}`);
+  console.log(`Server on http://0.0.0.0:${config.port}`);
+  console.log(`Allowed Origins: ${config.allowedOrigins.join(", ")}`);
 });
