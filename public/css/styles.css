@@ -4,8 +4,6 @@
   --text: #e8eefc;
   --muted: #9fb0d0;
   --accent: #5aa3ff;
-  --danger: #ff5a7d;
-  --ok: #4ad295;
 }
 
 * { box-sizing: border-box; }
@@ -15,7 +13,6 @@ body {
   background: var(--bg);
   color: var(--text);
 }
-
 .header, .footer {
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px 16px;
@@ -23,7 +20,6 @@ body {
   border-bottom: 1px solid #1b2746;
 }
 .footer { border-top: 1px solid #1b2746; border-bottom: none; justify-content: center; }
-
 .container { padding: 16px; max-width: 920px; margin: 0 auto; }
 .card {
   background: var(--card);
@@ -33,34 +29,21 @@ body {
   margin-bottom: 16px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.25);
 }
-
-.form label { display: block; margin-bottom: 12px; }
-input[type="password"] {
-  width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #26345c;
-  background: #0c142a; color: var(--text);
-}
-
-button {
-  background: var(--accent); color: #000; border: none; padding: 10px 16px;
-  border-radius: 10px; font-weight: 700; cursor: pointer;
-}
-button:hover { filter: brightness(1.1); }
-.logout button { background: #243356; color: var(--text); }
-
-.error { background: #2b1120; border: 1px solid #5b243f; padding: 10px; border-radius: 8px; margin-bottom: 12px; color: #ffd4e0; }
-
 .script-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
 .script-item {
   display: flex; align-items: center; justify-content: space-between;
   background: #0c142a; padding: 12px; border: 1px solid #1b2746; border-radius: 12px;
 }
 .script-name { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); }
-
+button {
+  background: var(--accent); color: #000; border: none; padding: 10px 16px;
+  border-radius: 10px; font-weight: 700; cursor: pointer;
+}
+button:hover { filter: brightness(1.1); }
 .console {
   background: #000; color: #d1f0d1; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   padding: 12px; border-radius: 10px; height: 45vh; overflow: auto; white-space: pre-wrap;
 }
-
 @media (max-width: 640px) {
   .script-item { flex-direction: column; gap: 8px; align-items: stretch; }
   .run-btn { width: 100%; }
