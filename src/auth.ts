@@ -15,13 +15,13 @@ export function loginHandler() {
   return async (req: Request, res: Response) => {
     const { password } = req.body as { password?: string };
     if (!password) {
-      return res.status(400).render("login", { error: "パスワードを入力してください", csrfToken: req.csrfToken() });
+      return res.status(400).render("login", { title: "ログイン", error: "パスワードを入力してください", csrfToken: req.csrfToken() });
     }
     if (await verifyPassword(password)) {
       req.session.isAuthenticated = true;
       return res.redirect("/");
     }
-    return res.status(401).render("login", { error: "認証に失敗しました", csrfToken: req.csrfToken() });
+    return res.status(401).render("login", { title: "ログイン", error: "認証に失敗しました", csrfToken: req.csrfToken() });
   };
 }
 
