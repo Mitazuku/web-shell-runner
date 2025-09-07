@@ -1,27 +1,41 @@
-<% layout('layout') %>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%- (typeof title !== 'undefined' ? title : 'Web Shell Runner') %></title>
+  <link rel="stylesheet" href="/public/css/styles.css" />
+</head>
+<body>
+  <header class="header">
+    <h1>Web Shell Runner</h1>
+  </header>
 
-<section class="card">
-  <h2>スクリプト一覧</h2>
-  <% if (!scripts.length) { %>
-    <p>scripts ディレクトリに .sh を配置してください。</p>
-  <% } else { %>
-    <ul class="script-list">
-      <% scripts.forEach(s => { %>
-        <li class="script-item">
-          <span class="script-name"><%= s %></span>
-          <button class="run-btn" data-script="<%= s %>">実行</button>
-        </li>
-      <% }) %>
-    </ul>
-  <% } %>
-</section>
+  <main class="container">
+    <section class="card">
+      <h2>スクリプト一覧</h2>
+      <% if (!scripts.length) { %>
+        <p>scripts ディレクトリに .sh を配置してください。</p>
+      <% } else { %>
+        <ul class="script-list">
+          <% scripts.forEach(s => { %>
+            <li class="script-item">
+              <span class="script-name"><%= s %></span>
+              <button class="run-btn" data-script="<%= s %>">実行</button>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </section>
 
-<section class="card">
-  <h2>コンソール</h2>
-  <div id="console" class="console"></div>
-</section>
+    <section class="card">
+      <h2>コンソール</h2>
+      <div id="console" class="console"></div>
+    </section>
+  </main>
 
-<script src="/public/js/client.js"></script>
-<script>
-  window.__CSRF__ = "<%= csrfToken %>";
-</script>
+  <footer class="footer">© <%= new Date().getFullYear() %></footer>
+
+  <script src="/public/js/client.js"></script>
+</body>
+</html>
