@@ -15,16 +15,25 @@ const app = express();
 
 // セキュリティヘッダ（開発中に HSTS は不要）
 app.use(helmet({
+  // 開発・8686直叩きでは HSTS は無効に
   hsts: false,
   contentSecurityPolicy: {
     useDefaults: true,
     directives: {
+      // HTTP運用時は “HTTPSへの自動アップグレード” を無効化
+      // (これが有効だと CSS/JS 取得が https://:8686 に書き換わり失敗します)
+      "upgrade-insecure-requests": null,
+      // 静的JS/CSS/画像は同一オリジンから読み込み
+      "default-src": ["'self'"],
       "script-src": ["'self'"],
-      "img-src": ["'self'"],
-      "style-src": ["'self' 'unsafe-inline'"]
+      "style-src": ["'self'", "'unsafe-inline'"],
+      "img-src": ["'self'", "data:"],
+      // WebSocket を許可（ws/wss 両方）
+      "connect-src": ["'self'", "ws:", "wss:"]
     }
   }
 }));
+
 
 // 静的・ビュー
 app.set("views", path.join(__dirname, "..", "views"));
