@@ -8,7 +8,7 @@ const router = Router();
 router.get("/", authGuard, async (req, res, next) => {
   try {
     const scripts = await listShellScripts(config.scriptsDir);
-    res.render("dashboard", { scripts, csrfToken: req.csrfToken() });
+    res.render("dashboard", { title: "ダッシュボード", scripts, csrfToken: req.csrfToken() });
   } catch (e) {
     next(e);
   }
