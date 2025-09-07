@@ -1,0 +1,27 @@
+<% layout('layout', { title: 'ダッシュボード', csrfToken }) %>
+
+<section class="card">
+  <h2>スクリプト一覧</h2>
+  <% if (!scripts.length) { %>
+    <p>scripts ディレクトリに .sh を配置してください。</p>
+  <% } else { %>
+    <ul class="script-list">
+      <% scripts.forEach(s => { %>
+        <li class="script-item">
+          <span class="script-name"><%= s %></span>
+          <button class="run-btn" data-script="<%= s %>">実行</button>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</section>
+
+<section class="card">
+  <h2>コンソール</h2>
+  <div id="console" class="console"></div>
+</section>
+
+<script src="/public/js/client.js"></script>
+<script>
+  window.__CSRF__ = "<%= csrfToken %>";
+</script>
